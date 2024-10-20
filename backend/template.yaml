@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "S3 Bucket for Terraform State"
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: "backend-s3-enrique-cloud"
+  EnableVersioning:
+    Type: String
+    Default: "true"
+
+Resources:
+  TerraformStateBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      VersioningConfiguration:
+        Status: !If [EnableVersioningIsTrue, 'Enabled', 'Suspended']
+      Tags: 
+        - Key: "Name"
+          Value: "S3 Bucket"
+        - Key: "Environment"
+          Value: "Dev"
+
+Conditions:
+  EnableVersioningIsTrue: !Equals [!Ref EnableVersioning, "true"]

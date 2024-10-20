@@ -1,7 +1,19 @@
+variable "access_key" {
+  description = "access_key"
+  type = string
+  sensitive = true
+}
+
+variable "secret_key" {
+  description = "secret_key"
+  type = string
+  sensitive = true
+}
+
 variable "bucket_name" {
   description = "Nombre del bucket S3"
   type = string
-  default = "backend-s3-enrique"
+  default = "backend-s3-enrique-cloud"
 }
 
 variable "acl" {

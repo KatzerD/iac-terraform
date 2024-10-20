@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "backend-s3-enrique"  # Bucket gestionado por otro IoC
+    bucket = "backend-s3-enrique-cloud"  # Bucket gestionado por otro IoC
     key    = "terraform/state"
     region = "us-east-1"
   }
@@ -16,6 +16,11 @@ provider "aws" {
   region     = "us-east-1"
   access_key = var.access_key
   secret_key = var.secret_key
+}
+
+resource "aws_key_pair" "my_key" {
+  key_name   = "ansible_key"
+  public_key = file("./.ssh/mi_clave_ssh.pub")
 }
 
 # Módulo para la red (VPC, Subnets, etc.)
@@ -40,11 +45,17 @@ module "compute" {
   ami           = "ami-08c40ec9ead489470"
   instance_type = "t2.micro"
   subnet_id     = module.network.subnet_id
+  key_name      = aws_key_pair.my_key.key_name
+  vpc_id = module.network.vpc_id
+  security_group_id = aws_security_group.ec2_sg.id
 }
 
 # Salida de las instancias de cómputo
 output "instance_id" {
   value = module.compute.instance_id
+}
+output "ec2_public_ip" {
+  value = module.compute.ec2_public_ip
 }
 
 # Módulo para la base de datos
@@ -62,13 +73,12 @@ module "database" {
   parameter_group_name = "default.postgres16"
 }
 
-
 # Output de los detalles de la base de datos
 output "rds_endpoint" {
-  value = module.database.db_endpoint
+  value = module.database.rds_endpoint
 }
 
-output "rds_db_name" {
+output "db_name" {
   value = module.database.db_name
 }
 

@@ -1,16 +1,29 @@
 variable "ami" {
-  type = string
+  type        = string
   description = "AMI ID for the EC2 instance"
-  default = "ami-08c40ec9ead489470"  # Para us-east-1
 }
 
 variable "instance_type" {
-    type = string
-    description = "Type of EC2 instance"
-    default = "t2.micro"  
+  type        = string
+  description = "Type of EC2 instance"
 }
 
 variable "subnet_id" {
-  type = string
+  type        = string
   description = "Subnet ID where the EC2 instance will be deployed"
+}
+
+variable "key_name" {
+  type        = string
+  description = "Name of the key pair"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC ID"
+}
+
+variable "security_group_id" {
+  type        = string
+  description = "ID of the security group for the EC2 instance"
 }

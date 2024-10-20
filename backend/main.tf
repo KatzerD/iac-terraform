@@ -1,7 +1,7 @@
 provider "aws" {
-  region     = "us-east-1"
-  access_key = "AKIAQ4NXQFHA2KPODXUX"
-  secret_key = "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"
+  region = "us-east-1"
+  access_key = var.access_key
+  secret_key = var.secret_key
 }
 
 resource "aws_s3_bucket" "terraform_state_bucket" {
@@ -48,8 +48,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_encrypt
 resource "aws_s3_bucket_public_access_block" "terraform_state_block" {
   bucket = aws_s3_bucket.terraform_state_bucket.id
 
-  block_public_acls   = true
-  block_public_policy = true
-  ignore_public_acls  = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
   restrict_public_buckets = true
 }

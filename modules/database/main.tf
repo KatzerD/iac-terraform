@@ -13,7 +13,7 @@ resource "aws_db_instance" "my_rds" {
   allocated_storage    = var.allocated_storage
   engine               = var.engine  # PostgreSQL
   instance_class       = var.instance_class
-
+  name = var.db_name
   username             = var.db_username
   password             = var.db_password
   db_subnet_group_name = aws_db_subnet_group.my_db_subnet_group.name
