@@ -20,8 +20,11 @@ provider "aws" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "ansible_key"
-  public_key = file("./.ssh/mi_clave_ssh.pub")
+  public_key = file("./.ssh/ansible_key.pub")
 }
+
+
+
 
 # Módulo para la red (VPC, Subnets, etc.)
 module "network" {
@@ -39,6 +42,10 @@ output "subnet_id" {
   value = module.network.subnet_id
 }
 
+
+
+
+
 # Módulo de computo (EC2 Instances)
 module "compute" {
   source        = "./modules/compute"
@@ -47,7 +54,6 @@ module "compute" {
   subnet_id     = module.network.subnet_id
   key_name      = aws_key_pair.my_key.key_name
   vpc_id = module.network.vpc_id
-  security_group_id = aws_security_group.ec2_sg.id
 }
 
 # Salida de las instancias de cómputo
@@ -57,6 +63,13 @@ output "instance_id" {
 output "ec2_public_ip" {
   value = module.compute.ec2_public_ip
 }
+
+
+
+
+
+
+
 
 # Módulo para la base de datos
 module "database" {
@@ -82,6 +95,7 @@ output "db_name" {
   value = module.database.db_name
 }
 
+# Grupo de Seguridad para base de datos
 resource "aws_security_group" "rds_sg" {
   vpc_id = module.network.vpc_id
 
@@ -102,4 +116,23 @@ resource "aws_security_group" "rds_sg" {
   tags = {
     Name = "RDS Security Group"
   }
+}
+
+
+
+
+# Recurso null_resource para generar el archivo de inventario de Ansible
+resource "local_file" "ansible_inventory" {
+  content = <<EOT
+[webservers]
+${module.compute.ec2_public_ip} ansible_ssh_private_key_file=~/.ssh/ansible_key.pem
+
+[databases]
+${module.database.rds_endpoint}
+
+[all:vars]
+ansible_user=ubuntu
+EOT
+
+  filename = "C:/Repositorios/Ansible/inventory/hosts.ini"
 }

@@ -22,8 +22,3 @@ variable "vpc_id" {
   type        = string
   description = "VPC ID"
 }
-
-variable "security_group_id" {
-  type        = string
-  description = "ID of the security group for the EC2 instance"
-}

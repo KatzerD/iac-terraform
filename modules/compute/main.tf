@@ -6,7 +6,7 @@ resource "aws_instance" "my_ec2" {
 
   associate_public_ip_address = true
 
-  vpc_security_group_ids = [var.security_group_id]
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
   tags = {
     Name = "My EC2 Instance"
